@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="balloon.css">
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                height: 100vh;
+            }
+        </style>
+    </head>
+    <body>
+        <!--<iframe src="https://voahbeild.nl" style="width: 100%; height: 100vh; border: none;"></iframe>-->
+        <div id="content" style="width:500px;height:500px;margin:0;"></div>
+        <script src="balloon.js"></script>
+        <script>
+            const BGame = new BalloonGame(
+                document.body,
+                //document.getElementById('content'),
+                'bottomRight',
+                null,
+                [
+                    new Balloon()
+                ]
+            )
+        </script>
+    </body>
+</html>

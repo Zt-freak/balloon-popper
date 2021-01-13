@@ -1,0 +1,22 @@
+.balloon {
+    animation-name: balloonanim;
+    animation-fill-mode: forwards;
+}
+
+@keyframes balloonanim {
+    from {top: 100%;}
+    to {top: -50%;}
+}
+
+.balloonmessage {
+    animation-name: messageanim;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+}
+
+@keyframes messageanim {
+    0% {opacity: 0;}
+    25% {opacity: 1;}
+    80% {opacity: 1;}
+    100% {opacity:  0;}
+}
