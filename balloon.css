@@ -1,11 +1,12 @@
 .balloon {
+    top: 100%;
     animation-name: balloonanim;
     animation-fill-mode: forwards;
 }
 
 @keyframes balloonanim {
-    from {top: 100%;}
-    to {top: -50%;}
+    from {transform: translateY(0)}
+    to {transform: translateY(-150vh)}
 }
 
 .balloonmessage {
