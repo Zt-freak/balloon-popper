@@ -16,13 +16,30 @@
         <div id="content" style="width:500px;height:500px;margin:0;"></div>
         <script src="balloon.js"></script>
         <script>
+            const redBalloon = new Balloon()
+            redBalloon.setPoints(2)
+            redBalloon.setImage('https://upload.wikimedia.org/wikipedia/commons/e/ec/Red_toy_balloon.svg')
+            const yellowBalloon = new Balloon()
+            yellowBalloon.setPoints(10)
+            yellowBalloon.setImage('https://upload.wikimedia.org/wikipedia/commons/0/05/Yellow_toy_balloon.svg')
+            yellowBalloon.setSpeed(5000)
+            const blueBalloon = new Balloon()
+            blueBalloon.setPoints(1)
+            blueBalloon.setImage('https://upload.wikimedia.org/wikipedia/commons/9/9e/Blue_toy_balloon.svg')
+            const badBalloon = new Balloon()
+            badBalloon.setPoints(-10)
+            badBalloon.setImage('https://upload.wikimedia.org/wikipedia/commons/c/ca/Black_toy_balloon.svg')
+            
             const BGame = new BalloonGame(
                 document.body,
                 //document.getElementById('content'),
                 'bottomRight',
                 null,
                 [
-                    new Balloon()
+                    redBalloon,
+                    yellowBalloon,
+                    blueBalloon,
+                    badBalloon
                 ]
             )
         </script>

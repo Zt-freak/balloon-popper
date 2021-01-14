@@ -8,14 +8,19 @@ class BalloonGame {
         this.state = {
             'score': 0,
             'highScore': 0,
+            'combo': 0,
             'timer': 0,
             'gameActive': false
         }
+        this.konamiIndex = 0
+        this.konamiActive = false
 
-        this.toggleGameActive = this.toggleGameActive.bind(this);
-        this.announce = this.announce.bind(this);
+        this.toggleGameActive = this.toggleGameActive.bind(this)
+        this.popBalloon = this.popBalloon.bind(this)
+        this.announce = this.announce.bind(this)
 
         this.init()
+        this.konami()
     }
 
     init () {
@@ -105,6 +110,7 @@ class BalloonGame {
     }
 
     startGame (time) {
+        //this.state.combo = 0
         this.state.timer = time
         this.gameOverlay.style.removeProperty('display')
         this.scoreBoard.style.display = 'flex'
@@ -125,7 +131,7 @@ class BalloonGame {
         else {
             this.announce(['GAME ENDED', 'FINAL SCORE: '+ this.state.score])
         }
-        this.state.score = 0;
+        this.state.score = 0
         this.gameOverlay.style.display = 'none'
         this.gameOverlay.innerHTML = ''
         this.scoreBoard.style.display = 'none'
@@ -145,33 +151,70 @@ class BalloonGame {
     }
 
     gameTick () {
-        if (Math.random() * 100 < 10 + this.state.score * 0.25 + this.state.highScore * 0.1) {
-            const speed = 20000 - this.state.score * 100 - this.state.highScore * 10
-            const newBalloon = this.balloons[Math.floor(Math.random() * this.balloons.length)].cloneNode(true)
-            newBalloon.setSpeed(speed);
-            newBalloon.style.left = Math.floor(Math.random() * (80 - 20) + 20)+'%'
+        if (Math.random() * 100 < 10 + this.state.score * 0.05 + this.state.highScore * 0.1) {
+            const speedRoll = Math.log(Math.random() * this.state.score + this.state.highScore * 0.1) / Math.log(100)
+            let speedModifier = 1
+            if (speedRoll < 0.1) {
+                speedModifier = 1
+                console.log('slow')
+            }
+            else if (speedRoll < 1) {
+                speedModifier = 0.5
+                console.log('normal')
+            }
+            else {
+                speedModifier = 0.3
+                console.log('fast')
+            }
+
+            const newBalloon = new Balloon()
+
+            const balloonFromArray = this.balloons[Math.floor(Math.random() * this.balloons.length)]
+
+            newBalloon.setImage(balloonFromArray.dataset.image)
+            newBalloon.setPoints(balloonFromArray.dataset.points)
+
+            const speed = newBalloon.dataset.speed * speedModifier - this.state.score
+
+            newBalloon.setSpeed(speed)
+            newBalloon.style.left = Math.floor(Math.random() * (70 - 30) + 30)+'%'
             setTimeout(
                 function () {
+                    if (newBalloon.dataset.points > 0) {
+                        this.state.combo = 0
+                    }
                     newBalloon.remove()
-                },
+                }.bind(this),
                 speed
             )
             this.gameOverlay.appendChild(newBalloon)
             newBalloon.addEventListener('mousedown',
                 function () {
-                    newBalloon.style.pointerEvents = 'none'
-                    this.state.score = this.state.score + parseInt(newBalloon.dataset.points)
-                    this.currentScoreSpan.innerText = 'score: ' + this.state.score
-                    newBalloon.style.backgroundImage = 'url(https://upload.wikimedia.org/wikipedia/commons/a/a2/Bahai_star.svg)'
-                    setTimeout(
-                        function () {
-                            newBalloon.remove()
-                        },
-                        250
-                    )
+                    this.popBalloon(newBalloon)
+                }.bind(this)
+            )
+            newBalloon.addEventListener('mouseover',
+                function () {
+                    if (this.konamiActive) {
+                        this.popBalloon(newBalloon)
+                    }
                 }.bind(this)
             )
         }
+    }
+
+    popBalloon (balloon) {
+        this.state.combo++
+        balloon.style.pointerEvents = 'none'
+        this.state.score = this.state.score + parseInt(balloon.dataset.points) + this.state.combo
+        this.currentScoreSpan.innerText = 'score: ' + this.state.score
+        balloon.style.backgroundImage = 'url(https://upload.wikimedia.org/wikipedia/commons/a/a2/Bahai_star.svg)'
+        setTimeout(
+            function () {
+                balloon.remove()
+            },
+            250
+        )
     }
 
     announce (announcements) {
@@ -214,24 +257,109 @@ class BalloonGame {
             this.balloons.push(balloon)
         }
     }
+
+    konami () {
+        document.addEventListener(
+            'keydown',
+            function (event) {
+                let isCorrect = false
+                switch (this.konamiIndex) {
+                    case 0:
+                        if (event.keyCode === 38) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 1:
+                        if (event.keyCode === 38) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 2:
+                        if (event.keyCode === 40) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 3:
+                        if (event.keyCode === 40) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 4:
+                        if (event.keyCode === 37) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 5:
+                        if (event.keyCode === 39) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 6:
+                        if (event.keyCode === 37) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 7:
+                        if (event.keyCode === 39) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 8:
+                        if (event.keyCode === 66) {
+                            this.konamiIndex++
+                            isCorrect = true
+                        }
+                        break
+                    case 9:
+                        if (event.keyCode === 65) {
+                            this.konamiIndex = 0
+                            if (this.konamiActive) {
+                                this.konamiActive = false
+                                this.announce(['KONAMI CODE DEACTIVATED'])
+                            }
+                            else {
+                                this.konamiActive = true
+                                this.announce(['KONAMI CODE ACTIVATED'])
+                            }
+                            isCorrect = true
+                        }
+                        break
+                }
+                if (isCorrect == false) {
+                    this.konamiIndex = 0
+                }
+            }.bind(this)
+        )
+    }
 }
 
 class Balloon extends HTMLElement {
-    constructor (points = 1, image = 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Balloons-aj.svg', speed = 20000) {
+    constructor () {
         super()
-        this.dataset.points = points
-        this.style.backgroundImage = 'url('+image+')'
-        this.style.backgroundSize = 'cover'
-        this.dataset.speed = speed
-        this.style.width = '6vw'
-        this.style.height = '6vw'
+        this.dataset.points = 1
+        this.style.backgroundImage = 'url(https://upload.wikimedia.org/wikipedia/commons/a/ae/Balloons-aj.svg)'
+        this.dataset.image = 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Balloons-aj.svg'
+        this.style.backgroundSize = 'contain'
+        this.style.backgroundPosition = 'center'
+        this.style.backgroundRepeat = 'no-repeat'
+        this.dataset.speed = 20000
+        this.style.width = '10vw'
+        this.style.height = '10vw'
         this.style.minWidth = '100px'
         this.style.minHeight = '100px'
         this.style.cursor = 'pointer'
         this.style.position = 'absolute'
         this.style.userSelect = 'none'
         this.draggable = false
-        this.style.animationDuration = speed+'ms'
+        this.style.animationDuration = 20000+'ms'
         this.classList.add('balloon')
     }
 
@@ -239,6 +367,15 @@ class Balloon extends HTMLElement {
         this.dataset.speed = speed
         this.style.animationDuration = speed+'ms'
     }
+
+    setImage (image) {
+        this.dataset.image = image
+        this.style.backgroundImage = 'url('+image+')'
+    }
+
+    setPoints (points) {
+        this.dataset.points = points
+    }
 }
 
-customElements.define('balloon-element', Balloon);
+customElements.define('balloon-element', Balloon)
