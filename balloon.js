@@ -50,7 +50,12 @@ class BalloonGame {
         this.menu.id = 'balloongame-menu'
         this.menu.style.width = '50px'
         this.menu.style.height = '50px'
-        this.menu.style.backgroundColor = 'white'
+        this.menu.style.backgroundColor = 'black'
+        this.menu.style.color = 'white'
+        this.menu.style.borderTopLeftRadius = '100%'
+        this.menu.style.display = 'flex'
+        this.menu.style.justifyContent = 'center'
+        this.menu.style.alignItems = 'center'
         if (this.parent.offsetHeight > window.innerHeight) {
             this.menu.style.position = 'fixed'
         }
@@ -156,15 +161,12 @@ class BalloonGame {
             let speedModifier = 1
             if (speedRoll < 0.1) {
                 speedModifier = 1
-                console.log('slow')
             }
             else if (speedRoll < 1) {
                 speedModifier = 0.5
-                console.log('normal')
             }
             else {
                 speedModifier = 0.3
-                console.log('fast')
             }
 
             const newBalloon = new Balloon()
@@ -172,12 +174,22 @@ class BalloonGame {
             const balloonFromArray = this.balloons[Math.floor(Math.random() * this.balloons.length)]
 
             newBalloon.setImage(balloonFromArray.dataset.image)
-            newBalloon.setPoints(balloonFromArray.dataset.points)
+            if (balloonFromArray.dataset.points <= 0) {
+                if (this.konamiActive) {
+                    newBalloon.setPoints(0)
+                }
+                else {
+                    newBalloon.setPoints(balloonFromArray.dataset.points)
+                }
+            }
+            else {
+                newBalloon.setPoints(balloonFromArray.dataset.points)
+            }
 
             const speed = newBalloon.dataset.speed * speedModifier - this.state.score
 
             newBalloon.setSpeed(speed)
-            newBalloon.style.left = Math.floor(Math.random() * (70 - 30) + 30)+'%'
+            newBalloon.style.left = Math.floor(Math.random() * (70 - 20) + 20)+'%'
             setTimeout(
                 function () {
                     if (newBalloon.dataset.points > 0) {
@@ -223,7 +235,6 @@ class BalloonGame {
                 let timeout =  1000 * (index + 1)
                 setTimeout(
                     function () {
-                        console.log(announcement)
                         const message = document.createElement('span')
                         message.innerText = announcement
                         if (this.parent.offsetHeight > window.innerHeight) {
@@ -351,8 +362,8 @@ class Balloon extends HTMLElement {
         this.style.backgroundPosition = 'center'
         this.style.backgroundRepeat = 'no-repeat'
         this.dataset.speed = 20000
-        this.style.width = '10vw'
-        this.style.height = '10vw'
+        this.style.width = '20vh'
+        this.style.height = '20vh'
         this.style.minWidth = '100px'
         this.style.minHeight = '100px'
         this.style.cursor = 'pointer'
